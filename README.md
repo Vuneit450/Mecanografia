@@ -13,7 +13,7 @@ Web app de mecanografía para **aprender inteligencia artificial mientras teclea
 
 | Acción | Dónde |
 |---|---|
-| Escribir una ruta de 35 lecciones de IA (cada una termina con su idea clave) | Practicar · Lecciones |
+| Escribir una ruta de 33 lecciones de IA de unas 650 palabras (unos 10 min a 60 ppm); se pueden hacer por partes y cada una termina con su idea clave | Practicar · Lecciones |
 | Practicar definiciones del glosario de IA o palabras frecuentes del español | Practicar → Texto |
 | **Añadir textos propios** (pegados o desde un `.txt`/`.md`); en textos largos recuerda por dónde vas | Mis textos |
 | **Por tiempo** (15/30/60/120 s), por número de palabras (10/25/50/100) o texto completo | Practicar → Duración |
