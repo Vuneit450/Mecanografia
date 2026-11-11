@@ -7,7 +7,7 @@ Web app de mecanografía para **aprender inteligencia artificial mientras teclea
 ## Cómo usarla
 
 - **En local:** abre `index.html` con doble clic (no necesita servidor ni compilación).
-- **En línea (GitHub Pages):** en el repositorio, *Settings → Pages → Deploy from a branch*, elige la rama y la carpeta `/ (root)`.
+- **En línea (GitHub Pages):** https://vuneit450.github.io/Mecanografia/ — cada push a `main` copia la app a la rama `gh-pages` (`.github/workflows/pages.yml`). En *Settings → Pages* la fuente debe ser *Deploy from a branch*, rama `gh-pages`, carpeta `/ (root)`.
 
 ## Qué puedes hacer
 

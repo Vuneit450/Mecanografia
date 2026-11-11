@@ -1,14 +1,14 @@
 name: Publicar en GitHub Pages
 
+# GitHub Pages publica la rama gh-pages. Este workflow copia la app (index.html,
+# css/ y js/) a esa rama en cada push a main; no necesita permisos de Pages.
 on:
   push:
     branches: [main]
   workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+  contents: write
 
 concurrency:
   group: pages
@@ -17,20 +17,17 @@ concurrency:
 jobs:
   publicar:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.despliegue.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/configure-pages@v5
-        with:
-          enablement: true
-      - name: Preparar el sitio
+      - name: Actualizar la rama gh-pages
         run: |
-          mkdir _site
-          cp -r index.html css js _site/
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: _site
-      - id: despliegue
-        uses: actions/deploy-pages@v4
+          mkdir -p "$RUNNER_TEMP/sitio"
+          cp -r index.html css js "$RUNNER_TEMP/sitio/"
+          touch "$RUNNER_TEMP/sitio/.nojekyll"
+          cd "$RUNNER_TEMP/sitio"
+          git init -q -b gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Publicar ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" gh-pages
