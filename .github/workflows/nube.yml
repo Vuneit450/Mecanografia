@@ -1,0 +1,28 @@
+name: Publicar la nube (Cloudflare)
+
+# Despliega el Worker de sincronización (nube/). Necesita los secretos
+# CLOUDFLARE_API_TOKEN y CLOUDFLARE_ACCOUNT_ID en el repositorio.
+on:
+  push:
+    branches: [main]
+    paths: ['nube/**', '.github/workflows/nube.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Probar el Worker (no se despliega si falla)
+        run: node --test nube/worker.test.mjs
+      - name: Desplegar
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx wrangler@4 deploy --config nube/wrangler.jsonc

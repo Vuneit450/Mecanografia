@@ -1,0 +1,7 @@
+{
+  "name": "mecanografia-sync",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-26",
+  "durable_objects": { "bindings": [{ "name": "CUENTAS", "class_name": "Cuenta" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Cuenta"] }]
+}

@@ -578,6 +578,21 @@
     catch (err) { aviso('No se pudo importar: ' + err.message); }
     e.target.value = '';
   });
+  // ── Nube ──
+  const nEstado = $('#n-estado'), nLlave = $('#n-llave');
+  nLlave.value = Nube.llave();
+  nEstado.textContent = Nube.llave() ? Nube.textoUltima() : 'Sin llave: los datos solo viven en este navegador.';
+  Nube.alCambiar((t) => { nEstado.textContent = t; });
+  const repintar = (n) => { if (n) { pintarHistorial(); pintarCabecera(); pintarConfig(); } };
+  $('#n-guardar').addEventListener('click', () => {
+    try { Nube.ponerLlave(nLlave.value); } catch (err) { return aviso(err.message); }
+    if (Nube.llave()) Nube.sincronizar().then((n) => { repintar(n); aviso(n ? `Llegaron ${n} pruebas de la nube.` : 'Sincronizado.'); }).catch(() => {});
+  });
+  $('#n-sync').addEventListener('click', () => {
+    if (!Nube.llave()) return aviso('Primero guarda una llave.');
+    Nube.sincronizar().then((n) => { repintar(n); aviso(n ? `Llegaron ${n} pruebas de la nube.` : 'Sincronizado.'); }).catch(() => {});
+  });
+
   $('#x-borrar').addEventListener('click', () => {
     if (!Almacen.sesiones.length) return aviso('No hay nada que borrar.');
     if (confirm(`¿Borrar las ${Almacen.sesiones.length} pruebas guardadas? Esta acción no se puede deshacer. Exporta antes si quieres conservarlas.`)) { Almacen.borrarSesiones(); pintarHistorial(); pintarCabecera(); }
@@ -631,6 +646,7 @@
   aplicarAjustes();
   Almacen.abrir().then(() => {
     pintarCabecera(); pintarConfig(); nuevaPrueba(); navegar();
+    Nube.sincronizar().then((n) => { if (n) { pintarHistorial(); pintarCabecera(); } }).catch(() => {});
     if (document.fonts?.ready) document.fonts.ready.then(() => actualizarCursor(true));
   });
 })();

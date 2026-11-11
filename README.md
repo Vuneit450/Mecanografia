@@ -37,3 +37,16 @@ Cada prueba guarda sus métricas y **todas las pulsaciones** (posición, caráct
 - `mecanografia-pulsaciones-*.csv`: una fila por tecla pulsada, con latencia y carácter anterior. Listo para Excel, Python o Tableau.
 
 El diseño completo (investigación, estructura, modelo de datos y fórmulas) está en [docs/DISENO.md](docs/DISENO.md).
+
+
+## Nube (sincronización entre equipos)
+En **Historial → Nube** pon la misma llave (mínimo 12 caracteres) en cada equipo. Al abrir la app y
+después de cada cambio, la app baja la copia de la nube, la une con la local (no reemplaza; lo borrado
+en un equipo se borra en los demás) y sube el resultado. Los ajustes visuales son de cada equipo.
+
+- Servidor: `nube/worker.js`, un Worker de Cloudflare con un Durable Object por llave. Solo guarda el
+  SHA-256 de la llave, nunca la llave.
+- Dirección: `https://mecanografia-sync.jesusjonathan171.workers.dev` (constante `API` en `js/nube.js`).
+- Pruebas: `node --test nube/worker.test.mjs`.
+- Publicación: `.github/workflows/nube.yml` en cada push que toque `nube/`. Necesita los secretos
+  `CLOUDFLARE_API_TOKEN` y `CLOUDFLARE_ACCOUNT_ID` en el repositorio.

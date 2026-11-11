@@ -60,7 +60,7 @@ main { max-width: 1080px; margin: 0 auto; padding: 1rem clamp(1rem, 4vw, 2.5rem)
 .pastillas button { font: inherit; font-size: .85rem; color: var(--tenue); background: none; border: 0; padding: .3rem .7rem; border-radius: 6px; cursor: pointer; white-space: nowrap; }
 .pastillas button:hover { color: var(--texto); }
 .pastillas button.act { background: var(--acento); color: var(--sobre-acento); font-weight: 600; }
-select, input[type=text], textarea { font: inherit; color: var(--texto); background: var(--sup); border: 1px solid var(--borde); border-radius: 8px; padding: .45rem .6rem; max-width: 100%; }
+select, input[type=text], input[type=password], textarea { font: inherit; color: var(--texto); background: var(--sup); border: 1px solid var(--borde); border-radius: 8px; padding: .45rem .6rem; max-width: 100%; }
 .btn { font: inherit; font-size: .9rem; display: inline-flex; align-items: center; gap: .5rem; color: var(--texto); background: var(--sup2); border: 1px solid var(--borde); border-radius: 8px; padding: .5rem .9rem; cursor: pointer; text-decoration: none; }
 .btn:hover { border-color: var(--acento); }
 .btn.primario { background: var(--acento); color: var(--sobre-acento); border-color: var(--acento); font-weight: 600; }
@@ -210,3 +210,7 @@ td { padding: .38rem .6rem .38rem 0; border-bottom: 1px solid color-mix(in oklab
   #inf-tecla { margin-left: 0; width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+.nube { margin-bottom: 1.4rem; }
+.nube h2 { font-size: 1.05rem; margin: 0 0 .3rem; }
+.nube .sub { margin-bottom: .6rem; }
+#n-llave { flex: 1 1 14rem; }

@@ -86,7 +86,17 @@
     <!-- ───────── Historial ───────── -->
     <section id="v-historial" class="vista" hidden>
       <h1>Historial y datos</h1>
-      <p class="sub">Tus datos se guardan solo en este navegador. Expórtalos para analizarlos en Excel, Python o Tableau, o para llevarlos a otro equipo.</p>
+      <p class="sub">Tus datos se guardan en este navegador. Con la nube se sincronizan entre tus equipos; también puedes exportarlos para Excel, Python o Tableau.</p>
+      <div class="nube">
+        <h2>Nube</h2>
+        <p class="sub">Pon la misma llave (mínimo 12 caracteres) en cada equipo donde practiques. Guárdala bien: quien la tenga ve tus datos y sin ella no se recuperan.</p>
+        <div class="fila">
+          <input id="n-llave" type="password" placeholder="Llave de sincronización" autocomplete="off" aria-label="Llave de sincronización">
+          <button class="btn primario" id="n-guardar">Guardar</button>
+          <button class="btn" id="n-sync">Sincronizar ahora</button>
+        </div>
+        <p class="sub" id="n-estado" role="status"></p>
+      </div>
       <div class="fila datos">
         <button class="btn" id="x-json">Exportar todo (JSON)</button>
         <button class="btn" id="x-csv-s">Sesiones (CSV)</button>
@@ -113,6 +123,7 @@
   <script src="js/textos/criterio.js"></script>
   <script src="js/contenido.js"></script>
   <script src="js/almacen.js"></script>
+  <script src="js/nube.js"></script>
   <script src="js/motor.js"></script>
   <script src="js/analisis.js"></script>
   <script src="js/graficas.js"></script>
