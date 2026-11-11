@@ -10,8 +10,7 @@ const Nube = (() => {
 
   let enCurso = null, otraVez = false, temporizador = null;
   const oyentes = [];
-  let estado = '';
-  function avisar(t) { estado = t; oyentes.forEach((f) => f(t)); }
+  function avisar(t) { oyentes.forEach((f) => f(t)); }
 
   const llave = () => lee(K_LLAVE);
   function ponerLlave(v) {
@@ -63,5 +62,5 @@ const Nube = (() => {
   }
   window.addEventListener('online', programar);
 
-  return { llave, ponerLlave, sincronizar, programar, textoUltima, alCambiar: (f) => oyentes.push(f), get estado() { return estado; }, MIN };
+  return { llave, ponerLlave, sincronizar, programar, textoUltima, alCambiar: (f) => oyentes.push(f) };
 })();

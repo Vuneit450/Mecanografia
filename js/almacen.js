@@ -61,7 +61,7 @@ const Almacen = (() => {
   // Une los datos recibidos con los locales (no reemplaza): agrega pruebas y
   // textos que falten y respeta lo borrado en cualquiera de los dos lados.
   function importarJSON(txt) {
-    const d = typeof txt === 'string' ? JSON.parse(txt) : txt;
+    const d = JSON.parse(txt);
     if (!d || !Array.isArray(d.sesiones)) throw new Error('El archivo no tiene el formato esperado.');
     silencio = true;
     try { return unir(d); } finally { silencio = false; }
