@@ -49,7 +49,12 @@
         if (i < 0) i = LECCIONES.findIndex((l) => !Almacen.progreso.lecciones[l.id]);
         if (i < 0) i = Math.floor(Math.random() * LECCIONES.length);
         const lec = LECCIONES[i]; let k = i;
-        Object.assign(f, { leccion: lec, titulo: `${lec.cat} · ${lec.titulo}`, texto: T(lec.texto) });
+        // Las lecciones son largas: cualquier formato continúa donde lo dejaste.
+        const w = T(lec.texto).split(' ');
+        let ini = Almacen.progreso.posLeccion?.[lec.id] || 0;
+        if (ini >= w.length) ini = 0;
+        Object.assign(f, { leccion: lec, reanuda: { ini, total: w.length }, texto: w.slice(ini).join(' '),
+          titulo: `${lec.cat} · ${lec.titulo}` + (ini ? ` · desde la palabra ${ini + 1} de ${w.length}` : '') });
         f.mas = () => { k = (k + 1) % LECCIONES.length; return T(LECCIONES[k].texto); };
         break;
       }
@@ -118,7 +123,8 @@
     const comp = Almacen.sesiones.filter((s) => s.completada);
     ppmFantasma = aj.fantasma === 'promedio' ? media(comp.slice(-10).map((s) => s.ppm))
       : aj.fantasma === 'mejor' ? Math.max(0, ...comp.filter((s) => s.medida === aj.medida).map((s) => s.ppm)) : 0;
-    $('#p-titulo').innerHTML = `<b>${esc(fuente.titulo)}</b>` + (fuente.nota ? `<span class="nota">${esc(fuente.nota)}</span>` : '');
+    $('#p-titulo').innerHTML = `<b>${esc(fuente.titulo)}</b>` + (fuente.nota ? `<span class="nota">${esc(fuente.nota)}</span>` : '')
+      + (fuente.leccion && fuente.reanuda?.ini ? ' <button type="button" class="mini" id="desde-cero">Empezar desde el principio</button>' : '');
     $('#resultados').hidden = true; $('#prueba').hidden = false;
     $('#pista').textContent = ''; $('#barra-int').style.width = '0';
     $('#v-ppm').textContent = '0'; $('#v-prec').textContent = '100';
@@ -246,21 +252,24 @@
     Almacen.guardarSesion(reg);
     // Progreso
     const pr = Almacen.progreso;
-    if (fuente.leccion && medida === 'completo' && completada) {
-      const p = pr.lecciones[fuente.leccion.id] || { veces: 0, mejor: 0 };
-      p.veces++; p.mejor = Math.max(p.mejor, r.ppm); pr.lecciones[fuente.leccion.id] = p;
-      if (aj.leccionId) { const i = LECCIONES.findIndex((l) => l.id === aj.leccionId); aj.leccionId = LECCIONES[(i + 1) % LECCIONES.length].id; Almacen.guardarAjustes(); }
+    const hechas = Math.max(0, sesion.texto.slice(0, sesion.pos).split(' ').length - (sesion.pos >= sesion.texto.length ? 0 : 1));
+    let leccionTerminada = false;
+    if (fuente.leccion && fuente.reanuda) {
+      const id = fuente.leccion.id, pos = (pr.posLeccion = pr.posLeccion || {});
+      if (fuente.reanuda.ini + hechas >= fuente.reanuda.total) {
+        leccionTerminada = true; delete pos[id];
+        const p = pr.lecciones[id] || { veces: 0, mejor: 0 };
+        p.veces++; p.mejor = Math.max(p.mejor, r.ppm); pr.lecciones[id] = p;
+        if (aj.leccionId) { const i = LECCIONES.findIndex((l) => l.id === aj.leccionId); aj.leccionId = LECCIONES[(i + 1) % LECCIONES.length].id; Almacen.guardarAjustes(); }
+      } else pos[id] = fuente.reanuda.ini + hechas;
     }
-    if (fuente.propio) {
-      const hechas = sesion.texto.slice(0, sesion.pos).split(' ').length - (sesion.pos >= sesion.texto.length ? 0 : 1);
-      pr.textos[fuente.propio.id] = { palabra: (fuente.propio.ini + Math.max(0, hechas)) % fuente.propio.total };
-    }
+    if (fuente.propio) pr.textos[fuente.propio.id] = { palabra: (fuente.propio.ini + hechas) % fuente.propio.total };
     Almacen.guardarProgreso();
     pintarCabecera();
-    if (mostrar) mostrarResultados(reg, completada && previo > 0 && r.ppm > previo);
+    if (mostrar) mostrarResultados(reg, completada && previo > 0 && r.ppm > previo, leccionTerminada);
   }
 
-  function mostrarResultados(s, record) {
+  function mostrarResultados(s, record, leccionTerminada) {
     const ag = Analisis.agregar([s]);
     const fall = ag.teclas.filter((t) => t.err > 0 && t.k !== '⇧').sort((a, b) => b.err - a.err).slice(0, 12);
     const pals = ag.palabras.slice(0, 12).map((p) => p.k);
@@ -291,10 +300,11 @@
           ${fall.length ? `<div class="chips">${fall.map((t) => `<span class="chip"><kbd>${esc(ver(t.k))}</kbd> ${t.err} de ${t.n}</span>`).join('')}</div>` : '<p class="tenue">Ninguna. Prueba limpia.</p>'}
           ${ag.confusiones.length ? `<p class="tenue">Confusiones: ${ag.confusiones.slice(0, 4).map((c) => `<kbd>${esc(ver(c.tec))}</kbd> en vez de <kbd>${esc(ver(c.esp))}</kbd>`).join(' · ')}</p>` : ''}
         </div>
-        ${lec ? `<div class="tarjeta idea"><h3>Idea clave · ${esc(lec.titulo)}</h3><p>${esc(lec.clave)}</p></div>` : ''}
+        ${lec ? `<div class="tarjeta idea"><h3>Idea clave · ${esc(lec.titulo)}</h3><p>${esc(lec.clave)}</p>
+          <p class="tenue">${leccionTerminada ? '✓ Lección completada.' : `Llevas ${Math.round((100 * (Almacen.progreso.posLeccion?.[lec.id] || 0)) / fuente.reanuda.total)} % de la lección. La próxima prueba continúa donde lo dejaste.`}</p></div>` : ''}
       </div>
       <div class="fila centro">
-        <button class="btn primario" data-acc="siguiente">${lec ? 'Siguiente lección' : 'Siguiente'} <kbd>Tab</kbd></button>
+        <button class="btn primario" data-acc="siguiente">${lec ? (leccionTerminada ? 'Siguiente lección' : 'Continuar la lección') : 'Siguiente'} <kbd>Tab</kbd></button>
         <button class="btn" data-acc="repetir">Repetir este texto <kbd>Esc</kbd></button>
         ${pals.length ? '<button class="btn" data-acc="errores">Repasar las palabras falladas</button>' : ''}
         <a class="btn" href="#analisis">Ver mi análisis</a>
@@ -306,6 +316,11 @@
       unidad: ' ppm', etqX: (p) => p.x + ' s', desdeCero: true, nombre: 'PPM por segundo',
     });
   }
+  $('#p-titulo').addEventListener('click', (e) => {
+    if (e.target.id !== 'desde-cero') return;
+    cerrarSesion(false);
+    delete Almacen.progreso.posLeccion[fuente.leccion.id]; Almacen.guardarProgreso(); nuevaPrueba();
+  });
   $('#resultados').addEventListener('click', (e) => {
     const a = e.target.closest('[data-acc]')?.dataset.acc;
     if (a === 'siguiente') nuevaPrueba();
@@ -382,14 +397,16 @@
 
   // ───────────────────────── Lecciones ─────────────────────────
   function pintarLecciones() {
-    const pr = Almacen.progreso.lecciones, cats = [...new Set(LECCIONES.map((l) => l.cat))];
+    const pr = Almacen.progreso.lecciones, pos = Almacen.progreso.posLeccion || {}, cats = [...new Set(LECCIONES.map((l) => l.cat))];
+    const ppm = media(Almacen.sesiones.filter((s) => s.completada).slice(-10).map((s) => s.ppm)) || 40;
+    const info = (l) => { const n = l.texto.split(' ').length; return `${n} palabras · unos ${Math.max(1, Math.round(n / ppm))} min` + (pos[l.id] ? ` · vas en ${Math.round((100 * pos[l.id]) / n)} %` : ''); };
     const hechas = LECCIONES.filter((l) => pr[l.id]).length;
-    $('#lecciones').innerHTML = `<p class="avance"><b>${hechas}</b> de ${LECCIONES.length} lecciones completadas</p><div class="barra fija"><i style="width:${(100 * hechas) / LECCIONES.length}%"></i></div>` +
+    $('#lecciones').innerHTML = `<p class="avance"><b>${hechas}</b> de ${LECCIONES.length} lecciones completadas · tiempos estimados a ${Math.round(ppm)} ppm</p><div class="barra fija"><i style="width:${(100 * hechas) / LECCIONES.length}%"></i></div>` +
       cats.map((c) => `<h2>${esc(c)}</h2><div class="rejilla">${LECCIONES.filter((l) => l.cat === c).map((l) => `
         <button class="leccion ${pr[l.id] ? 'hecha' : ''}" data-id="${l.id}">
           <span class="marca-l">${pr[l.id] ? '✓' : LECCIONES.indexOf(l) + 1}</span>
           <b>${esc(l.titulo)}</b>
-          <span class="tenue">${l.texto.split(' ').length} palabras${pr[l.id] ? ` · mejor ${Math.round(pr[l.id].mejor)} ppm · ${pr[l.id].veces}×` : ''}</span>
+          <span class="tenue">${info(l)}${pr[l.id] ? ` · mejor ${Math.round(pr[l.id].mejor)} ppm · ${pr[l.id].veces}×` : ''}</span>
         </button>`).join('')}</div>`).join('');
   }
   $('#lecciones').addEventListener('click', (e) => {

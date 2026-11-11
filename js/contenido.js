@@ -111,6 +111,12 @@ const LECCIONES = [
     clave: 'La IA acelera el trabajo; el criterio y la responsabilidad siguen siendo humanos.' },
 ];
 
+/* Versión larga de cada lección (js/textos/*.js, unas 650 palabras). El texto breve queda como resumen. */
+for (const l of LECCIONES) {
+  const p = (typeof window !== 'undefined' && window.TEXTOS_LECCION || {})[l.id];
+  if (p) { l.resumen = l.texto; l.texto = p.join(' '); }
+}
+
 /* Definiciones cortas: se encadenan al azar en la fuente "Glosario IA". */
 const GLOSARIO = [
   'Token: fragmento de texto que el modelo procesa como una unidad.',
