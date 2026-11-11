@@ -116,7 +116,7 @@ const Almacen = (() => {
   }
 
   return {
-    abrir, AJUSTES_DEF,
+    abrir,
     get ajustes() { return ajustes; }, get textos() { return textos; }, get progreso() { return progreso; },
     get sesiones() { return sesiones; },
     set textos(v) { textos = v; },

@@ -136,6 +136,5 @@ const Analisis = (() => {
     return { porDia, racha, hoy: porDia.get(diaLocal(new Date())) || 0 };
   }
 
-  return { agregar, practicaDebil, consejos, actividad, dedoDe, teclaBase, ver, diaLocal };
+  return { agregar, practicaDebil, consejos, actividad, teclaBase, ver, diaLocal };
 })();
-if (typeof module !== 'undefined') module.exports = Analisis;

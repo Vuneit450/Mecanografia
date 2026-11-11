@@ -82,4 +82,3 @@ const Motor = (() => {
 
   return { Sesion, resumen };
 })();
-if (typeof module !== 'undefined') module.exports = Motor;
