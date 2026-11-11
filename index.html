@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="es" data-tema="tinta">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mecanografía IA — aprende inteligencia artificial mientras tecleas</title>
+  <meta name="description" content="Práctica de mecanografía con lecciones de inteligencia artificial, textos propios y análisis de puntos débiles.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230f1419'/><rect x='14' y='6' width='4' height='20' rx='2' fill='%235eead4'/></svg>">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="cab">
+    <a class="marca" href="#practicar"><i></i>mecanografía<b>·ia</b></a>
+    <nav id="nav">
+      <a href="#practicar">Practicar</a>
+      <a href="#lecciones">Lecciones</a>
+      <a href="#textos">Mis textos</a>
+      <a href="#analisis">Análisis</a>
+      <a href="#historial">Historial</a>
+      <a href="#ajustes">Ajustes</a>
+    </nav>
+    <div class="cab-der" id="cab-der"></div>
+  </header>
+
+  <main>
+    <!-- ───────── Practicar ───────── -->
+    <section id="v-practicar" class="vista">
+      <div id="config" class="config"></div>
+
+      <div id="prueba">
+        <div class="prueba-cab">
+          <div id="p-titulo" class="p-titulo"></div>
+          <div class="vivo" aria-live="off">
+            <div><b id="v-ppm">0</b><span>ppm</span></div>
+            <div><b id="v-prec">100</b><span>% precisión</span></div>
+            <div><b id="v-tiempo">0</b><span id="v-tiempo-etq">s</span></div>
+          </div>
+        </div>
+        <div id="zona" class="zona">
+          <textarea id="entrada" aria-label="Escribe aquí el texto mostrado" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false"></textarea>
+          <div id="texto" class="texto"><div id="texto-int" class="texto-int"></div></div>
+          <div id="desenfoque" class="desenfoque" hidden>Haz clic aquí o pulsa una tecla para continuar</div>
+        </div>
+        <div class="barra"><i id="barra-int"></i></div>
+        <div id="pista" class="pista"></div>
+        <div class="atajos"><kbd>Tab</kbd> texto nuevo · <kbd>Esc</kbd> repetir el mismo</div>
+      </div>
+
+      <div id="resultados" class="resultados" hidden></div>
+    </section>
+
+    <!-- ───────── Lecciones ───────── -->
+    <section id="v-lecciones" class="vista" hidden>
+      <h1>Ruta de aprendizaje de IA</h1>
+      <p class="sub">Cada lección es un texto de unas 650 palabras. Puedes escribirla de una vez o por partes: cualquier prueba continúa donde lo dejaste, y se marca como completada al llegar al final.</p>
+      <div id="lecciones"></div>
+    </section>
+
+    <!-- ───────── Mis textos ───────── -->
+    <section id="v-textos" class="vista" hidden>
+      <h1>Mis textos</h1>
+      <p class="sub">Pega o carga cualquier texto (apuntes, un artículo, un capítulo) y practica con él. En textos largos se guarda por dónde vas.</p>
+      <form id="form-texto" class="tarjeta form">
+        <input type="hidden" id="t-id">
+        <label>Título <input id="t-titulo" type="text" maxlength="80" placeholder="Ej. Apuntes del curso de prompts" required></label>
+        <label>Texto <textarea id="t-texto" rows="7" placeholder="Pega aquí el texto…" required></textarea></label>
+        <div class="fila">
+          <button class="btn primario" type="submit">Guardar texto</button>
+          <label class="btn">Cargar archivo .txt / .md<input id="t-archivo" type="file" accept=".txt,.md,.markdown,text/plain" hidden></label>
+          <button class="btn" type="button" id="t-cancelar" hidden>Cancelar edición</button>
+          <span id="t-cuenta" class="tenue"></span>
+        </div>
+      </form>
+      <div id="lista-textos"></div>
+    </section>
+
+    <!-- ───────── Análisis ───────── -->
+    <section id="v-analisis" class="vista" hidden>
+      <div class="titulo-fila">
+        <h1>Análisis de puntos débiles</h1>
+        <div class="pastillas" id="rango"></div>
+      </div>
+      <div id="analisis"></div>
+    </section>
+
+    <!-- ───────── Historial ───────── -->
+    <section id="v-historial" class="vista" hidden>
+      <h1>Historial y datos</h1>
+      <p class="sub">Tus datos se guardan solo en este navegador. Expórtalos para analizarlos en Excel, Python o Tableau, o para llevarlos a otro equipo.</p>
+      <div class="fila datos">
+        <button class="btn" id="x-json">Exportar todo (JSON)</button>
+        <button class="btn" id="x-csv-s">Sesiones (CSV)</button>
+        <button class="btn" id="x-csv-t">Pulsaciones (CSV)</button>
+        <label class="btn">Importar JSON<input id="x-importar" type="file" accept=".json,application/json" hidden></label>
+        <button class="btn peligro" id="x-borrar">Borrar historial</button>
+      </div>
+      <div id="historial"></div>
+    </section>
+
+    <!-- ───────── Ajustes ───────── -->
+    <section id="v-ajustes" class="vista" hidden>
+      <h1>Ajustes</h1>
+      <div id="ajustes" class="tarjeta"></div>
+    </section>
+  </main>
+
+  <div id="aviso" class="aviso" hidden></div>
+
+  <script src="js/textos/fundamentos.js"></script>
+  <script src="js/textos/aprendizaje.js"></script>
+  <script src="js/textos/lenguaje.js"></script>
+  <script src="js/textos/uso.js"></script>
+  <script src="js/textos/criterio.js"></script>
+  <script src="js/contenido.js"></script>
+  <script src="js/almacen.js"></script>
+  <script src="js/motor.js"></script>
+  <script src="js/analisis.js"></script>
+  <script src="js/graficas.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
